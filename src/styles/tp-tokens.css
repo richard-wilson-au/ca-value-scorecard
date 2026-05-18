@@ -1,0 +1,135 @@
+/* ============================================================
+   TRANSFORMATION PARTNERS — Foundations
+   Mirrored from .claude/skills/transformation-partners-design/colors_and_type.css
+   on 2026-05-18 as part of the diagnostic v1.1 rebuild Phase 1.
+
+   Webfonts are self-hosted via Fontsource (see globals.css imports) —
+   the original Google Fonts @import is intentionally omitted to keep
+   CSP-safe / no external requests.
+   ============================================================ */
+
+:root {
+  /* ============================================================
+     COLOUR — Brand
+     ============================================================ */
+  --tp-paper:        #E4EAF1; /* Light Blue/Grey — section bg, subtle panels */
+  --tp-navy:         #556C8E; /* Dark Navy/Charcoal — body text, headers, structural */
+  --tp-yellow:       #FEB739; /* Yellow/Gold — favicon, highlights, secondary accent panels */
+  --tp-orange:       #F96121; /* Burnt Orange — emphasis pulls, CTAs, headline accents */
+
+  /* Brand tints/shades, derived for UI surfaces */
+  --tp-navy-ink:     #2F3D55; /* near-black ink derived from navy for body copy */
+  --tp-navy-soft:    #8C9AB1; /* secondary text */
+  --tp-navy-line:    #C6CFDC; /* hairline borders */
+
+  --tp-paper-deep:   #D4DCE7; /* slightly stronger panel */
+  --tp-paper-warm:   #F6F2EB; /* warm off-white alt canvas */
+
+  --tp-orange-deep:  #D44A0E; /* hover/press state */
+  --tp-yellow-deep:  #E6A024;
+
+  --tp-white:        #FFFFFF;
+  --tp-black:        #1A1A1A;
+
+  /* ============================================================
+     SEMANTIC SURFACE TOKENS
+     ============================================================ */
+  --bg:              var(--tp-white);
+  --bg-alt:          var(--tp-paper);
+  --bg-warm:         var(--tp-paper-warm);
+  --bg-inverse:      var(--tp-navy);
+
+  --fg:              var(--tp-navy-ink);
+  --fg-muted:        var(--tp-navy-soft);
+  --fg-strong:       var(--tp-navy);
+  --fg-inverse:      var(--tp-white);
+
+  --accent:          var(--tp-orange);
+  --accent-hover:    var(--tp-orange-deep);
+  --accent-warm:     var(--tp-yellow);
+
+  --border:          var(--tp-navy-line);
+  --border-strong:   var(--tp-navy);
+
+  /* ============================================================
+     TYPE — Families
+     Body: Helvetica system stack (no @import — system font on macOS/iOS;
+     Arial fallback on Windows/Android).
+     Display: Libre Baskerville (self-hosted via @fontsource/libre-baskerville).
+     Mono: IBM Plex Mono (self-hosted via @fontsource/ibm-plex-mono).
+     ============================================================ */
+  --font-display:    "Libre Baskerville", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --font-body:       "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+  --font-mono:       "IBM Plex Mono", "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  /* Theme aliases (Tailwind 4 @theme block in globals.css maps to these) */
+  --theme-font-sans:    var(--font-body);
+  --theme-font-display: var(--font-display);
+  --theme-font-mono:    var(--font-mono);
+
+  /* ============================================================
+     TYPE — Scale (editorial, slow ramp)
+     ============================================================ */
+  --size-eyebrow:    11px;   /* small caps labels */
+  --size-meta:       13px;   /* metadata */
+  --size-body-sm:    14px;
+  --size-body:       16px;
+  --size-body-lg:    18px;
+  --size-lede:       20px;   /* article ledes */
+  --size-h6:         16px;
+  --size-h5:         20px;
+  --size-h4:         24px;
+  --size-h3:         32px;
+  --size-h2:         44px;
+  --size-h1:         60px;
+  --size-display:    88px;   /* hero / cover headlines */
+
+  --leading-tight:   1.08;
+  --leading-snug:    1.2;
+  --leading-normal:  1.45;
+  --leading-relaxed: 1.6;
+  --leading-loose:   1.75;
+
+  --tracking-tight:   -0.015em;
+  --tracking-normal:  0em;
+  --tracking-eyebrow: 0.14em; /* small caps labels */
+
+  /* ============================================================
+     SPACING (8pt baseline, generous editorial gutters)
+     ============================================================ */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  96px;
+  --s-10: 128px;
+
+  /* ============================================================
+     RADII — restrained. We are not a SaaS.
+     ============================================================ */
+  --r-0:    0px;
+  --r-1:    2px;   /* default — almost imperceptible */
+  --r-2:    4px;   /* form fields */
+  --r-3:    8px;   /* cards */
+  --r-pill: 999px; /* tags, pills */
+
+  /* ============================================================
+     SHADOWS — sparing, paper-like
+     ============================================================ */
+  --shadow-0: none;
+  --shadow-1: 0 1px 0 rgba(85, 108, 142, 0.08);
+  --shadow-2: 0 1px 2px rgba(47, 61, 85, 0.06), 0 1px 1px rgba(47, 61, 85, 0.04);
+  --shadow-3: 0 8px 24px -8px rgba(47, 61, 85, 0.18);
+
+  /* ============================================================
+     LAYOUT — editorial column widths
+     ============================================================ */
+  --measure-narrow: 36rem;  /* ~580px, ideal reading */
+  --measure:        42rem;  /* ~672px */
+  --measure-wide:   60rem;  /* ~960px */
+  --gutter:         var(--s-7);
+}

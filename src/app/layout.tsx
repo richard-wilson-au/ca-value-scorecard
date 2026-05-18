@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "Strategic Capacity Diagnostic | Transformation Partners",
   description:
     "A five-minute diagnostic for senior Corporate Affairs leaders. Score your function's value-demonstration maturity against ASX-listed mining and energy peers.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({

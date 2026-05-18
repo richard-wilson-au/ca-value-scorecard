@@ -1,26 +1,73 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* TP design tokens — single source of truth for colours, type, spacing, radii.
+   Mirrored from .claude/skills/transformation-partners-design/colors_and_type.css. */
+@import "../styles/tp-tokens.css";
 
+/* Self-hosted TP brand fonts via Fontsource — CSP-safe, no external requests.
+   Libre Baskerville (display) + IBM Plex Mono (system labels). Helvetica is
+   a system font; no @import needed for body. */
+@import "@fontsource/libre-baskerville/400.css";
+@import "@fontsource/libre-baskerville/400-italic.css";
+@import "@fontsource/libre-baskerville/700.css";
+@import "@fontsource/libre-baskerville/700-italic.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+
+/* -------------------------------------------------------------------------
+   Tailwind 4 @theme — maps Tailwind utility classes to TP tokens.
+   Light mode only. TP canon is white-canvas; no @media prefers-color-scheme.
+   ------------------------------------------------------------------------- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colour utilities — bg-*, text-*, border-* */
+  --color-background: var(--bg);
+  --color-background-alt: var(--bg-alt);
+  --color-background-warm: var(--bg-warm);
+  --color-background-inverse: var(--bg-inverse);
+
+  --color-foreground: var(--fg);
+  --color-foreground-muted: var(--fg-muted);
+  --color-foreground-strong: var(--fg-strong);
+  --color-foreground-inverse: var(--fg-inverse);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-warm: var(--accent-warm);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  /* Brand palette — direct hex access via bg-tp-*, text-tp-* */
+  --color-tp-paper: var(--tp-paper);
+  --color-tp-paper-deep: var(--tp-paper-deep);
+  --color-tp-paper-warm: var(--tp-paper-warm);
+  --color-tp-navy: var(--tp-navy);
+  --color-tp-navy-ink: var(--tp-navy-ink);
+  --color-tp-navy-soft: var(--tp-navy-soft);
+  --color-tp-navy-line: var(--tp-navy-line);
+  --color-tp-yellow: var(--tp-yellow);
+  --color-tp-yellow-deep: var(--tp-yellow-deep);
+  --color-tp-orange: var(--tp-orange);
+  --color-tp-orange-deep: var(--tp-orange-deep);
+  --color-tp-white: var(--tp-white);
+
+  /* Font families — font-sans (body), font-display (headings), font-mono (labels) */
+  --font-sans: var(--theme-font-sans);
+  --font-display: var(--theme-font-display);
+  --font-mono: var(--theme-font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* -------------------------------------------------------------------------
+   Base layer — TP-aligned defaults
+   ------------------------------------------------------------------------- */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-weight: 300; /* Helvetica Light per TP canon */
+  font-size: var(--size-body);
+  line-height: var(--leading-relaxed);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
