@@ -2,17 +2,15 @@
 
 import { PILLAR_LABELS, type Pillar, type ScoreResult } from '../../lib/scoring';
 
-// TODO Phase 4 — hand-curated "what top-quartile does differently" paragraph
-// per dominant-weakness pillar. Placeholder copy below renders the layout.
 const ASPIRATIONAL_COPY: Record<Pillar, string> = {
   inclusion:
-    'What top-quartile CA Heads do differently on Inclusion: they negotiate calendared positions in the decision-shape phase, not the comms-plan phase. The pattern is structural — a standing seat at the strategy offsite, the M&A diligence rhythm, the investor-day prep — and it survives the calendar. The conversation isn’t whether the function is briefed; it’s what the function would change about the decision before it leaves the room.',
+    "Top-quartile CA Heads earn a standing seat at the strategy offsite, the M&A diligence rhythm, and the investor-day prep. The seat is calendared, not granted. They are in the room when the decision is still soft, not when the comms plan is being drafted. The question they answer is what the function would change about the decision before it leaves the room, and the CEO has come to expect that answer in writing.",
   counsel:
-    'What top-quartile CA Heads do differently on Counsel: they make the counsel function explicit. There is a named cadence — quarterly with the CEO, monthly on the politically expensive choices — and the function defends its judgment in writing, not just in conversation. The CEO doesn’t need to ask; the counsel is on the calendar.',
+    "Top-quartile CA Heads make the counsel function visible. There is a named cadence with the CEO, usually quarterly on strategy and monthly on the politically expensive choices, and the judgement is recorded in a one-page memo, not lost in a corridor conversation. The CEO does not have to remember to ask. The counsel is on the calendar, and the written record is what the Board sees when the decision is later reviewed.",
   measurement:
-    'What top-quartile CA Heads do differently on Measurement: they run a quarterly measurement review with the CEO and CFO. The agenda is fixed — three contribution metrics, audited by Finance, defended to the Board the same way operations defends EBITDA. The conversation isn’t whether the function delivered; that’s evidence-based. The conversation is what to invest in next.',
+    "Top-quartile CA Heads run a quarterly measurement review with the CEO and CFO. The agenda is fixed: three contribution metrics, audited by Finance, defended to the Board the same way operations defends EBITDA. The conversation is no longer whether the function delivered, because the number is signed. The conversation is what to invest in next, and the function is the one being asked, not the one being reviewed.",
   architecture:
-    'What top-quartile CA Heads do differently on Architecture: they build the function into the cadence of the company, not into the calendar of the CEO. The risk register has a CA seat. The M&A diligence runbook has a CA stage. The investor-day prep starts with a CA briefing. The work isn’t getting invited; it’s being in the process by default.',
+    "Top-quartile CA Heads build the function into the cadence of the company, not into the calendar of the CEO. The risk register has a CA seat by default. The M&A diligence runbook has a named CA stage with a deliverable. The investor-day prep starts with a CA briefing. The work is being in the process whether or not the CEO remembers to invite them, because the process itself was designed with the seat already in it.",
 };
 
 export default function AspirationalBenchmark({

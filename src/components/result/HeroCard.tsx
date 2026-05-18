@@ -2,48 +2,46 @@
 
 import type { ScoreResult, Pillar, Tier } from '../../lib/scoring';
 
-// TODO Phase 4 — replace with hand-curated 20-entry (tier × dominantWeakness)
-// interpretation dictionary. Phase 3 ships placeholders so the layout renders.
 const HERO_SENTENCE: Record<Tier, Record<Pillar, string>> = {
   Trailblazer: {
     inclusion:
-      'You sit upstream of most decisions, and the data shows it — the work now is keeping the inclusion lever load-bearing as the function scales.',
+      "You are upstream of the decisions that matter, and the data agrees. The remaining work is keeping that posture as the function grows past you.",
     counsel:
-      "The CEO already treats your judgment as a strategic asset. The next gap is structural — making the counsel function survive your calendar.",
+      "The CEO has come to expect your judgement on the hard calls. The next move is making the counsel survive whoever sits in your chair after you.",
     measurement:
-      "You measure well by the standards of the field, which is a low bar; the unfinished work is a CFO-grade definition of contribution.",
+      "You measure better than your peer set, which is a low bar. The unfinished work is a CFO-grade definition of contribution that Finance is willing to sign.",
     architecture:
-      'Your function is in most rooms it should be in. The remaining gaps are the rooms top-quartile peers treat as non-negotiable.',
+      "Your function is in most rooms a CA Head should be in. The few you are missing are the ones top-quartile peers treat as a standing seat.",
   },
   Aspirant: {
     inclusion:
-      "You're closer to upstream than most, but still being briefed on decisions you should be shaping. Closing that gap is the next visible win.",
+      "You are closer to upstream than most of your peers, but still being briefed on decisions you should be shaping. That gap is the next visible win.",
     counsel:
-      "The CEO consults you on some things, not the politically expensive ones. That's the gap to name and close in the next twelve months.",
+      "The CEO consults you on most things, but not the politically expensive ones. Closing that gap is the move that re-prices the function in his head.",
     measurement:
-      "You can defend the work, but not yet in CFO language. That's the single largest gap in your profile — and the one peers are closing fastest.",
+      "You can defend the work, but not yet in CFO language. That is the widest gap in your profile, and the one your peer set is closing fastest.",
     architecture:
-      "Your function is in most strategic conversations, but the missing ones are the load-bearing ones. Worth naming explicitly with the CEO.",
+      "Your function is in most of the strategic conversations. The missing ones are the rooms where the function would have the most to say. Worth naming each one with the CEO.",
   },
   Follower: {
     inclusion:
-      "You're downstream of most decisions that the function should be shaping. Inclusion is the lever that unlocks everything else on this scorecard.",
+      "You are downstream of decisions the function should be shaping. Inclusion is the gap that, once closed, makes every other gap on this scorecard easier.",
     counsel:
-      "The CEO uses you for delivery, not for counsel. That's a relationship gap, not a competence gap — and it's the one to close first.",
+      "The CEO uses you for delivery, not for counsel. That is a relationship gap rather than a competence gap, and it is the first one to close.",
     measurement:
-      "The function is reviewed in cost language, not contribution language. Until that flips, every other gap on this scorecard stays open.",
+      "The function is reviewed in cost language, not contribution language. Until that flips at the CFO's desk, every other gap on this scorecard stays open.",
     architecture:
-      "Your function is missing from the rooms where top-quartile CA Heads earn their seat. Architecture is the structural fix the others depend on.",
+      "Your function is missing from the rooms where top-quartile CA Heads earn their seat. Architecture is the structural fix the other three pillars depend on.",
   },
   Beginner: {
     inclusion:
-      "The function is operating downstream of decisions across the board. The first move is naming one decision per quarter you should be shaping.",
+      "The function is operating downstream of decisions across the board. The first move is picking one named decision per quarter and shaping it end to end.",
     counsel:
-      "The CEO relationship is transactional, not advisory. Rebuilding that is the precondition for everything else on this scorecard.",
+      "The CEO relationship is transactional. Rebuilding it as advisory is the precondition for the other three pillars, and it is a twelve-month project.",
     measurement:
-      "Without a CFO-grade definition of contribution, the function gets reviewed in cost language every cycle. That's the first gap to close.",
+      "Without a CFO-grade definition of contribution, the function is reviewed in cost language every cycle. That is the first gap to close, before anything else.",
     architecture:
-      "Your function is missing from the strategic conversations a CA Head needs to be in. Architecture is the foundation everything else sits on.",
+      "The function is missing from most of the strategic conversations a CA Head needs to be in. Architecture is the foundation the other three pillars sit on.",
   },
 };
 
