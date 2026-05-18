@@ -1,5 +1,5 @@
-import StrategicCapacityDiagnostic from '@/components/StrategicCapacityDiagnostic';
+import Diagnostic from '@/components/Diagnostic';
 
 export default function Home() {
-  return <StrategicCapacityDiagnostic />;
+  return <Diagnostic />;
 }
