@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import PlaceholderResult from './result/PlaceholderResult';
+import Result from './result/Result';
 
 type LikertScore = 1 | 2 | 3 | 4 | 5;
 
@@ -151,7 +151,7 @@ export default function Diagnostic() {
   }
 
   if (step === 'result') {
-    return <PlaceholderResult answers={answers} onRestart={() => {
+    return <Result answers={answers} onRestart={() => {
       setAnswers(INITIAL_ANSWERS);
       setStepIndex(0);
     }} />;
