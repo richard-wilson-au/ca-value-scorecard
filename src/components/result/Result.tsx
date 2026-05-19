@@ -69,7 +69,7 @@ export default function Result({
         <div className="mt-14 md:mt-16">
           <SectionRule />
           <div className="mt-6">
-            <NextSteps />
+            <NextSteps answers={answers} />
           </div>
         </div>
 

@@ -7,6 +7,13 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
+  // Ship the TP TTF font files inside the /api/pdf serverless function bundle
+  // on Vercel. Without this, public/ is served as static assets only and the
+  // function's process.cwd()/public/fonts/*.ttf paths don't resolve at
+  // runtime. Each glob is relative to the project root.
+  outputFileTracingIncludes: {
+    "/api/pdf": ["./public/fonts/*.ttf"],
+  },
 };
 
 export default nextConfig;

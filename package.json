@@ -11,6 +11,7 @@
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.2.7",
     "@fontsource/libre-baskerville": "^5.2.10",
+    "@react-pdf/renderer": "^4.5.1",
     "next": "16.2.6",
     "react": "19.2.4",
     "react-dom": "19.2.4"
