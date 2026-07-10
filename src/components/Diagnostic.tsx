@@ -3,6 +3,23 @@
 import { useState } from 'react';
 import Result from './result/Result';
 
+// Contact identity handed off from the GHL opt-in page via URL params
+// (?email={{contact.email}}&name={{contact.name}}). Read once at mount so the
+// result page can fire silent capture without re-asking. Empty when the visitor
+// arrives without params (direct traffic / shared link) — the result page then
+// shows a one-field fallback instead.
+export type PrefillContact = { name: string; email: string };
+
+function readPrefillContact(): PrefillContact {
+  if (typeof window === 'undefined') return { name: '', email: '' };
+  const params = new URLSearchParams(window.location.search);
+  const email = (params.get('email') ?? '').trim();
+  const name = (params.get('name') ?? params.get('full_name') ?? '').trim();
+  // Guard against unresolved GHL merge tags arriving literally.
+  const clean = (v: string) => (v.includes('{{') ? '' : v);
+  return { name: clean(name), email: clean(email) };
+}
+
 type LikertScore = 1 | 2 | 3 | 4 | 5;
 
 export type Answers = {
@@ -136,6 +153,8 @@ function isStepComplete(step: StepKey, answers: Answers): boolean {
 export default function Diagnostic() {
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>(INITIAL_ANSWERS);
+  // Read once, lazily, so it isn't re-parsed on every render.
+  const [prefill] = useState<PrefillContact>(readPrefillContact);
 
   const step = STEPS[stepIndex];
   const canContinue = isStepComplete(step, answers);
@@ -151,7 +170,7 @@ export default function Diagnostic() {
   }
 
   if (step === 'result') {
-    return <Result answers={answers} onRestart={() => {
+    return <Result answers={answers} prefill={prefill} onRestart={() => {
       setAnswers(INITIAL_ANSWERS);
       setStepIndex(0);
     }} />;
