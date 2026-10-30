@@ -7,6 +7,7 @@ const fs = require('node:fs');
 require.extensions['.ts'] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, filename);
 const { validCompletion } = require('../src/lib/completion.ts');
 const { POST } = require('../src/app/api/diagnostic-complete/route.ts');
+const { POST: START } = require('../src/app/api/diagnostic-start/route.ts');
 const originalFetch = global.fetch;
 const originalKey = process.env.GHL_API_KEY;
 afterEach(() => { global.fetch = originalFetch; if (originalKey === undefined) delete process.env.GHL_API_KEY; else process.env.GHL_API_KEY = originalKey; });
@@ -77,4 +78,49 @@ test('HTML in names is escaped in the stored note and internal email', async () 
 test('cross-origin calls and oversized bodies are rejected', async () => {
   const p = payload(); const cross = new Request('https://strategic-capacity-diagnostic.vercel.app/api/diagnostic-complete', { method: 'POST', headers: { Origin: 'https://other.example' }, body: JSON.stringify(p) });
   assert.equal((await POST(cross)).status, 403); assert.equal((await POST(request({ padding: 'x'.repeat(13000) }))).status, 413);
+});
+
+test('start saves identity and a start tag without scores, completion tags or email', async () => {
+  const calls = [];
+  process.env.GHL_API_KEY = 'fake-test-key';
+  global.fetch = async (url, init) => {
+    calls.push({ path: new URL(url).pathname, body: JSON.parse(init.body) });
+    return Response.json({ contact: { id: 'applicant' } });
+  };
+  const response = await START(request({ name: ' Test Person ', email: ' TEST@example.com ' }));
+  assert.equal(response.status, 200);
+  assert.deepEqual(calls.map(c => c.path), ['/contacts/upsert', '/contacts/applicant/tags']);
+  assert.deepEqual(calls[0].body, { firstName: 'Test', lastName: 'Person', email: 'test@example.com', locationId: 'XSTagpGfycjvto36M28p', source: 'Strategic Capacity Diagnostic' });
+  assert.deepEqual(calls[1].body, { tags: ['slot-3-started'] });
+});
+
+test('start rejects malformed identity, cross-origin and oversized requests before GHL', async () => {
+  global.fetch = async () => { throw new Error('Must not call'); };
+  for (const body of [null, {}, { name: 'Test', email: 'bad' }, { name: '', email: 'a@b.com' }, { name: 'Test', email: '{{contact.email}}' }]) {
+    assert.equal((await START(request(body))).status, 400);
+  }
+  assert.equal((await START(request({ padding: 'x'.repeat(2100) }))).status, 413);
+  assert.equal((await START(new Request('https://example.com/api/diagnostic-start', { method: 'POST', headers: { Origin: 'https://other.example' }, body: '{}' }))).status, 403);
+});
+
+test('start refuses success when contact save or start tagging fails', async () => {
+  process.env.GHL_API_KEY = 'fake-test-key';
+  for (const failAt of ['/contacts/upsert', '/contacts/applicant/tags']) {
+    global.fetch = async url => new URL(url).pathname === failAt
+      ? Response.json({}, { status: 503 }) : Response.json({ contact: { id: 'applicant' } });
+    assert.equal((await START(request({ name: 'Test', email: 'test@example.com' }))).status, 502);
+  }
+});
+
+test('restarting an existing contact updates only identity and retains previous scores', async () => {
+  const updates = [];
+  process.env.GHL_API_KEY = 'fake-test-key';
+  global.fetch = async (url, init) => {
+    if (new URL(url).pathname === '/contacts/upsert') return Response.json({ meta: { contactId: 'applicant' } }, { status: 409 });
+    if (init.method === 'PUT') updates.push(JSON.parse(init.body));
+    return Response.json({});
+  };
+  for (let i = 0; i < 2; i++) assert.equal((await START(request({ name: 'Test', email: 'test@example.com' }))).status, 200);
+  assert.equal(updates.length, 2);
+  assert.ok(updates.every(body => !('customFields' in body) && !('tags' in body)));
 });

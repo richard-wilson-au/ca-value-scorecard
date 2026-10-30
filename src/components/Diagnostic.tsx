@@ -168,7 +168,7 @@ export default function Diagnostic() {
 
   async function goForward() {
     if (!canContinue || savingRef.current) return;
-    if (step !== 'rootCause') {
+    if (step !== 'identity' && step !== 'rootCause') {
       setStepIndex(stepIndex + 1);
       return;
     }
@@ -177,16 +177,19 @@ export default function Diagnostic() {
     setSaveError('');
     submissionId.current ??= crypto.randomUUID();
     try {
-      const response = await fetch('/api/diagnostic-complete', {
+      const starting = step === 'identity';
+      const response = await fetch(starting ? '/api/diagnostic-start' : '/api/diagnostic-complete', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...contact, answers, submissionId: submissionId.current }),
+        body: JSON.stringify(starting ? contact : { ...contact, answers, submissionId: submissionId.current }),
         signal: AbortSignal.timeout(120000),
       });
       const saved = await response.json();
       if (!response.ok || saved.ok !== true) throw new Error('Save not confirmed');
-      setStepIndex(STEPS.length - 1);
+      setStepIndex(starting ? stepIndex + 1 : STEPS.length - 1);
     } catch {
-      setSaveError('We could not confirm your result was saved. Your answers are still here. Please try again.');
+      setSaveError(step === 'identity'
+        ? 'We could not confirm your details were saved. Please try again to start the quiz.'
+        : 'We could not confirm your result was saved. Your answers are still here. Please try again.');
     } finally {
       savingRef.current = false;
       setSaving(false);
@@ -278,7 +281,7 @@ export default function Diagnostic() {
 
         </fieldset>
         {saveError && <p role="alert" className="mt-6 font-sans text-base text-tp-orange-deep">{saveError}</p>}
-        {saving && <p role="status" className="mt-6 font-sans text-base text-tp-navy">Saving your answers and result…</p>}
+        {saving && <p role="status" className="mt-6 font-sans text-base text-tp-navy">{step === 'identity' ? 'Saving your details…' : 'Saving your answers and result…'}</p>}
         <Navigation
           showBack={stepIndex > 0 && !saving}
           canContinue={canContinue}
@@ -316,7 +319,7 @@ function IdentityScreen({
       </p>
 
       <p className="mt-4 font-sans text-sm text-tp-navy-soft">
-        Your answers and result will be shared with Richard Wilson at Transformation Partners so he can follow up with you.
+        When you click Continue, your name and email will be saved and shared with Richard Wilson at Transformation Partners so he can follow up with you, even if you don&apos;t finish. Your answers and result will also be shared when you complete the quiz.
       </p>
       <div className="mt-8 grid gap-5 md:grid-cols-2">
         <label className="font-sans text-base text-tp-navy-ink">Your name

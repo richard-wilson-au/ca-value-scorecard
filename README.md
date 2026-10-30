@@ -39,6 +39,12 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Completion capture and notifications
 
 Visitors confirm name and email before starting (URL handoff values are prefilled).
+Their first Continue saves identity to GHL via /api/diagnostic-start and adds
+slot-3-started before opening the next question. These leads remain if they abandon
+the quiz. A failed save stays on the opening screen with retry. The opening notice
+explains this capture and follow-up. Start capture sends no email and does not set
+completion tags, scores or newsletter consent. To find incomplete leads, filter
+slot-3-started AND NOT slot-3-completed (contact-level, not per repeat attempt).
 The last step saves before showing results. Each completed quiz writes all eight
 answers, identity, time, scores, tier, weakest pillar and a submission reference to
 a GHL contact note. The note is independently read back before an internal email
