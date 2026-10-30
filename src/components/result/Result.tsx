@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import type { Answers, PrefillContact } from '../Diagnostic';
+import type { Answers } from '../Diagnostic';
 import { scoreAnswers } from '../../lib/scoring';
 import HeroCard from './HeroCard';
 import SubScores from './SubScores';
@@ -31,11 +31,9 @@ function OrangeBall() {
 
 export default function Result({
   answers,
-  prefill,
   onRestart,
 }: {
   answers: Answers;
-  prefill: PrefillContact;
   onRestart: () => void;
 }) {
   const result = useMemo(() => scoreAnswers(answers), [answers]);
@@ -71,7 +69,7 @@ export default function Result({
         <div className="mt-14 md:mt-16">
           <SectionRule />
           <div className="mt-6">
-            <NextSteps answers={answers} result={result} prefill={prefill} />
+            <NextSteps answers={answers} result={result} />
           </div>
         </div>
 

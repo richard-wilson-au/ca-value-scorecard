@@ -57,6 +57,7 @@ export async function upsertContact(
       method: 'POST',
       headers: getHeaders(apiKey),
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(15000),
     });
 
     const data = (await response.json()) as Record<string, unknown>;
@@ -74,6 +75,14 @@ export async function upsertContact(
       const meta = data.meta as Record<string, unknown> | undefined;
       const contactId = (meta?.contactId ?? meta?.id) as string | undefined;
       if (contactId) {
+        // A duplicate response does not mean the new score fields were saved.
+        const { locationId: _locationId, ...updates } = payload;
+        void _locationId;
+        const updated = await fetch(`${GHL_API_URL}/contacts/${encodeURIComponent(contactId)}`, {
+          method: 'PUT', headers: getHeaders(apiKey), body: JSON.stringify(updates),
+          signal: AbortSignal.timeout(15000),
+        });
+        if (!updated.ok) return { success: false, error: 'Existing contact update failed', statusCode: updated.status };
         return { success: true, contactId, isDuplicate: true };
       }
     }
@@ -103,6 +112,7 @@ export async function addContactTags(
       method: 'POST',
       headers: getHeaders(apiKey),
       body: JSON.stringify({ tags }),
+      signal: AbortSignal.timeout(15000),
     });
     if (response.ok) return { success: true };
     return {

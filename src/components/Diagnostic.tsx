@@ -1,13 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Result from './result/Result';
 
 // Contact identity handed off from the GHL opt-in page via URL params
 // (?email={{contact.email}}&name={{contact.name}}). Read once at mount so the
-// result page can fire silent capture without re-asking. Empty when the visitor
-// arrives without params (direct traffic / shared link) — the result page then
-// shows a one-field fallback instead.
+// quiz can confirm identity before starting. Direct visitors enter their details.
 export type PrefillContact = { name: string; email: string };
 
 function readPrefillContact(): PrefillContact {
@@ -154,24 +152,52 @@ export default function Diagnostic() {
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>(INITIAL_ANSWERS);
   // Read once, lazily, so it isn't re-parsed on every render.
-  const [prefill] = useState<PrefillContact>(readPrefillContact);
+  const [contact, setContact] = useState<PrefillContact>(readPrefillContact);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const savingRef = useRef(false);
+  const submissionId = useRef<string | null>(null);
 
   const step = STEPS[stepIndex];
-  const canContinue = isStepComplete(step, answers);
+  const hasContact = contact.name.trim().length > 0 && contact.name.length <= 200 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim());
+  const canContinue = isStepComplete(step, answers) && (step !== 'identity' || hasContact) && !saving;
 
   function goBack() {
-    if (stepIndex > 0) setStepIndex(stepIndex - 1);
+    if (!savingRef.current && stepIndex > 0) { setSaveError(''); setStepIndex(stepIndex - 1); }
   }
 
-  function goForward() {
-    if (canContinue && stepIndex < STEPS.length - 1) {
+  async function goForward() {
+    if (!canContinue || savingRef.current) return;
+    if (step !== 'rootCause') {
       setStepIndex(stepIndex + 1);
+      return;
+    }
+    savingRef.current = true;
+    setSaving(true);
+    setSaveError('');
+    submissionId.current ??= crypto.randomUUID();
+    try {
+      const response = await fetch('/api/diagnostic-complete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...contact, answers, submissionId: submissionId.current }),
+        signal: AbortSignal.timeout(120000),
+      });
+      const saved = await response.json();
+      if (!response.ok || saved.ok !== true) throw new Error('Save not confirmed');
+      setStepIndex(STEPS.length - 1);
+    } catch {
+      setSaveError('We could not confirm your result was saved. Your answers are still here. Please try again.');
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
     }
   }
 
   if (step === 'result') {
-    return <Result answers={answers} prefill={prefill} onRestart={() => {
+    return <Result answers={answers} onRestart={() => {
       setAnswers(INITIAL_ANSWERS);
+      submissionId.current = null;
+      setSaveError('');
       setStepIndex(0);
     }} />;
   }
@@ -187,8 +213,11 @@ export default function Diagnostic() {
           </p>
         )}
 
+        <fieldset disabled={saving} className="min-w-0">
         {step === 'identity' && (
           <IdentityScreen
+            contact={contact}
+            onContactChange={setContact}
             sector={answers.sector}
             functionSize={answers.functionSize}
             onSectorChange={(v) => setAnswers({ ...answers, sector: v })}
@@ -247,12 +276,15 @@ export default function Diagnostic() {
           />
         )}
 
+        </fieldset>
+        {saveError && <p role="alert" className="mt-6 font-sans text-base text-tp-orange-deep">{saveError}</p>}
+        {saving && <p role="status" className="mt-6 font-sans text-base text-tp-navy">Saving your answers and result…</p>}
         <Navigation
-          showBack={stepIndex > 0}
+          showBack={stepIndex > 0 && !saving}
           canContinue={canContinue}
           onBack={goBack}
           onContinue={goForward}
-          continueLabel={stepIndex === STEPS.length - 2 ? 'See my result' : 'Continue'}
+          continueLabel={saving ? 'Saving…' : stepIndex === STEPS.length - 2 ? 'See my result' : 'Continue'}
         />
       </div>
     </main>
@@ -260,11 +292,15 @@ export default function Diagnostic() {
 }
 
 function IdentityScreen({
+  contact,
+  onContactChange,
   sector,
   functionSize,
   onSectorChange,
   onSizeChange,
 }: {
+  contact: PrefillContact;
+  onContactChange: (contact: PrefillContact) => void;
   sector: string;
   functionSize: string;
   onSectorChange: (value: string) => void;
@@ -273,12 +309,27 @@ function IdentityScreen({
   return (
     <div>
       <h1 className="font-display text-2xl leading-snug text-tp-navy-ink md:text-3xl">
-        Score your Corporate Affairs function's value-demonstration maturity against ASX-listed mining and energy peers.
+        Score your Corporate Affairs function&apos;s value-demonstration maturity against ASX-listed mining and energy peers.
       </h1>
       <p className="mt-4 font-sans text-base font-light text-tp-navy md:text-lg">
         Eight questions. Five minutes. A peer-benchmarked result you can forward to your CEO.
       </p>
 
+      <p className="mt-4 font-sans text-sm text-tp-navy-soft">
+        Your answers and result will be shared with Richard Wilson at Transformation Partners so he can follow up with you.
+      </p>
+      <div className="mt-8 grid gap-5 md:grid-cols-2">
+        <label className="font-sans text-base text-tp-navy-ink">Your name
+          <input required autoComplete="name" maxLength={200} value={contact.name}
+            onChange={e => onContactChange({ ...contact, name: e.target.value })}
+            className="mt-2 w-full rounded-sm border border-tp-navy-line px-3 py-2" />
+        </label>
+        <label className="font-sans text-base text-tp-navy-ink">Email
+          <input required type="email" autoComplete="email" maxLength={254} value={contact.email}
+            onChange={e => onContactChange({ ...contact, email: e.target.value })}
+            className="mt-2 w-full rounded-sm border border-tp-navy-line px-3 py-2" />
+        </label>
+      </div>
       <div className="mt-10 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-8">
         <ChipGroup
           label="Your sector"
@@ -372,10 +423,12 @@ function MultiSelectScreen({
   onChange: (value: string[]) => void;
 }) {
   function toggle(option: string) {
-    if (selected.includes(option)) {
+    if (option === "We're in all of these") {
+      onChange(selected.includes(option) ? [] : [option]);
+    } else if (selected.includes(option)) {
       onChange(selected.filter((o) => o !== option));
     } else {
-      onChange([...selected, option]);
+      onChange([...selected.filter(v => v !== "We're in all of these"), option]);
     }
   }
 
